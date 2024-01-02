@@ -5,6 +5,9 @@ import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import sistemafinanceiro.dao.ContaDAO;
@@ -24,6 +27,9 @@ public class Relatorio extends javax.swing.JFrame {
         jtRelatorio.setRowSorter(new TableRowSorter(modelo));
         readJTable();
         updateSomaLabel();
+        //Codigo para alinhar conteudo de texto das colunas da jtable
+        ((DefaultTableCellRenderer) jtRelatorio.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
+//        
     }
 
     private void updateSomaLabel() {
@@ -47,7 +53,7 @@ public class Relatorio extends javax.swing.JFrame {
                 nc.getNome().toUpperCase(),
                 valorFormatado,
                 nc.getVencimento(),
-                nc.getQtdParcela()                    
+                nc.getQtdParcela()
             });
             totalValor += nc.getValor();
         }
@@ -68,32 +74,46 @@ public class Relatorio extends javax.swing.JFrame {
         setPreferredSize(new java.awt.Dimension(800, 400));
         setResizable(false);
 
+        jtRelatorio.setFont(new java.awt.Font("Segoe UI", 2, 12)); // NOI18N
         jtRelatorio.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "Nome", "Valor", "Vencimento", "Quantidade de Parcelas"
+                "Nome", "Valor", "Vencimento", "Quantidade de Parcelas", "Pago"
             }
         ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Boolean.class
             };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
+        jtRelatorio.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jtRelatorio.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(jtRelatorio);
         if (jtRelatorio.getColumnModel().getColumnCount() > 0) {
             jtRelatorio.getColumnModel().getColumn(0).setResizable(false);
             jtRelatorio.getColumnModel().getColumn(1).setResizable(false);
+            jtRelatorio.getColumnModel().getColumn(1).setPreferredWidth(50);
             jtRelatorio.getColumnModel().getColumn(2).setResizable(false);
+            jtRelatorio.getColumnModel().getColumn(2).setPreferredWidth(50);
             jtRelatorio.getColumnModel().getColumn(3).setResizable(false);
+            jtRelatorio.getColumnModel().getColumn(3).setPreferredWidth(125);
+            jtRelatorio.getColumnModel().getColumn(4).setResizable(false);
         }
 
         jPanel1.setBackground(new java.awt.Color(204, 255, 204));
@@ -130,7 +150,9 @@ public class Relatorio extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)

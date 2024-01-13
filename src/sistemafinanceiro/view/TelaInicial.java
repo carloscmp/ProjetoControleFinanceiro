@@ -9,19 +9,13 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JTextArea;
 import sistemafinanceiro.view.Relatorio;
 import sistemafinanceiro.view.TelaCadastroConta;
 
-/**
- *
- * @author carlo
- */
+
 public class TelaInicial extends javax.swing.JFrame {
 
-    /**
-     * Creates new form TelaCa
-     */
+   
     public TelaInicial() {
         initComponents();
         setarData();
@@ -43,13 +37,13 @@ public class TelaInicial extends javax.swing.JFrame {
         lblData = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Inicio");
+        setTitle("Tela Inicial");
         setAlwaysOnTop(true);
         setPreferredSize(new java.awt.Dimension(600, 400));
         setResizable(false);
 
         jButton1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jButton1.setText("Nova Conta");
+        jButton1.setText("Cadastrar Nova Conta");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -75,7 +69,8 @@ public class TelaInicial extends javax.swing.JFrame {
 
         lblData.setFont(new java.awt.Font("Segoe UI Emoji", 1, 14)); // NOI18N
         lblData.setForeground(new java.awt.Color(255, 255, 255));
-        lblData.setText("jLabel1");
+        lblData.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblData.setText("data aparecera aqui");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);

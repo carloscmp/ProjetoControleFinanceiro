@@ -1,4 +1,4 @@
-package sistemafinanceiro.dao.conexao;
+package DAO.Conexao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

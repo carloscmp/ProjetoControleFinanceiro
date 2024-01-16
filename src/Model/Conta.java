@@ -1,15 +1,14 @@
 
-package sistemafinanceiro.entity;
+package Model;
 
 import java.util.Date;
-import java.util.List;
 
 
-public class NovaConta {
+public class Conta {
     private int id;
     private String nome;
     private double valor;
-    private int qtdParcela;
+    private int qtdParcela;//vai para Contas variaveis
     private Date vencimento;
 
     public int getId() {
@@ -53,9 +52,7 @@ public class NovaConta {
         this.vencimento = vencimento;
     }
 
-    public void add(List<NovaConta> novaContas) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
+  
 
   
 }

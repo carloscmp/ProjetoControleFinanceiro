@@ -1,25 +1,16 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
-package sistemafinanceiro.view;
+package View;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import javax.swing.JOptionPane;
-import sistemafinanceiro.dao.ContaDAO;
-import sistemafinanceiro.entity.NovaConta;
+import DAO.ContaVariavelDAO;
+import Model.Conta;
+import Util.Utilitario;
 
-/**
- *
- * @author carlo
- */
-public class TelaCadastroConta extends javax.swing.JFrame {
+public class TelaCadastroContaVariavel extends javax.swing.JFrame {
 
     /**
      * Creates new form TelaCadastroConta
      */
-    public TelaCadastroConta() {
+    public TelaCadastroContaVariavel() {
         initComponents();
     }
 
@@ -44,7 +35,7 @@ public class TelaCadastroConta extends javax.swing.JFrame {
         txtNome = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Nova Entrada");
+        setTitle("Nova Conta Variável");
         setAlwaysOnTop(true);
         setResizable(false);
 
@@ -228,16 +219,16 @@ public class TelaCadastroConta extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(18, 18, 18)
+                .addContainerGap()
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(16, 16, 16)
+                .addContainerGap()
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -249,32 +240,24 @@ public class TelaCadastroConta extends javax.swing.JFrame {
         jlQtdParcela.setText(String.valueOf(jsQtdParcelas.getValue()));
 
     }//GEN-LAST:event_jsQtdParcelasStateChanged
-    private String formatarData(Date data) {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        return sdf.format(data);
-    }
-
-    public void limparCampos() {
-
-        txtNome.setText("");
-        txtValor.setText("");
-        dcData.setDate(null);
-        jsQtdParcelas.setValue(1);
-
-    }
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        NovaConta nc = new NovaConta();
+        Conta nc = new Conta();
         nc.setNome(txtNome.getText());
         nc.setValor(Double.parseDouble(txtValor.getText()));
         nc.setQtdParcela(Integer.parseInt(jlQtdParcela.getText()));
+
         // setarData();
+        
         java.util.Date utilDate = dcData.getDate();
         java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
         nc.setVencimento(sqlDate);
-        limparCampos();
-        //conexão BD
-        ContaDAO cdao = new ContaDAO();
+
+        //Limpeza dos campos após entrada
+         Utilitario.limparCampos(txtNome, txtValor, dcData, jsQtdParcelas);
+
+        //conexão BD JDBC
+        ContaVariavelDAO cdao = new ContaVariavelDAO();
         cdao.adicinonar(nc);
         JOptionPane.showMessageDialog(rootPane, "Salvo com sucesso", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
 
@@ -297,20 +280,21 @@ public class TelaCadastroConta extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(TelaCadastroConta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TelaCadastroContaVariavel.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(TelaCadastroConta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TelaCadastroContaVariavel.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(TelaCadastroConta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TelaCadastroContaVariavel.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(TelaCadastroConta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TelaCadastroContaVariavel.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new TelaCadastroConta().setVisible(true);
+                new TelaCadastroContaVariavel().setVisible(true);
             }
         });
     }

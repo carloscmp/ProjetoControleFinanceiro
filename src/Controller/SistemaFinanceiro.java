@@ -1,7 +1,7 @@
 
-package sistemafinanceiro;
+package Controller;
 
-import sistemaFinanceiro.view.TelaInicial;
+import View.TelaInicial;
 
 public class SistemaFinanceiro {
 

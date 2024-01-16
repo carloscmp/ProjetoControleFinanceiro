@@ -1,26 +1,24 @@
-package sistemafinanceiro.view;
+package View;
 
-import java.awt.Component;
+import DAO.ContaFixaDAO;
 import java.sql.SQLException;
-import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-import static java.util.Locale.getDefault;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
-import sistemafinanceiro.dao.ContaDAO;
-import sistemafinanceiro.entity.NovaConta;
+import DAO.ContaVariavelDAO;
+import Model.Conta;
+import Model.ContaFixa;
+import Util.Utilitario;
 
 public class Relatorio extends javax.swing.JFrame {
 
@@ -85,24 +83,36 @@ public class Relatorio extends javax.swing.JFrame {
 
     public void readJTable() throws SQLException {
 
-        DefaultTableModel modelo = (DefaultTableModel) jtRelatorio.getModel();
-        modelo.setRowCount(0);
-        ContaDAO cdao = new ContaDAO();
-
+        
+        ContaVariavelDAO cdao = new ContaVariavelDAO();
         // Criar um formatador de números para formatar o valor
         NumberFormat numberFormat = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
-
-        for (NovaConta nc : cdao.read()) {
+        for (Conta nc : cdao.read()) {
+            DefaultTableModel modelo = (DefaultTableModel) jtRelatorio.getModel();
             // Formatar o valor como uma String antes de adicionar à tabela
             String valorFormatado = numberFormat.format(nc.getValor());
             modelo.addRow(new Object[]{
                 nc.getNome().toUpperCase(),
                 valorFormatado,
-                nc.getVencimento(),
+                Utilitario.formatarData(nc.getVencimento()),
+                //  new SimpleDateFormat("dd/MM/yyyy").format(nc.getVencimento()),
                 nc.getQtdParcela()
             });
             totalValor += nc.getValor();
         }
+        ContaFixaDAO cfdao = new ContaFixaDAO();
+        for (Conta nc1 : cfdao.read()) {
+            DefaultTableModel modelo = (DefaultTableModel) jtRelatorio1.getModel();
+            // Formatar o valor como uma String antes de adicionar à tabela
+            String valorFormatado = numberFormat.format(nc1.getValor());
+            modelo.addRow(new Object[]{
+                nc1.getNome().toUpperCase(),
+                valorFormatado,
+                Utilitario.formatarData(nc1.getVencimento()),
+                //  new SimpleDateFormat("dd/MM/yyyy").format(nc.getVencimento()),
+            });
+        }
+        
     }
 
     @SuppressWarnings("unchecked")
@@ -114,6 +124,10 @@ public class Relatorio extends javax.swing.JFrame {
         lblMes = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jlSoma = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jtRelatorio1 = new javax.swing.JTable();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Relatório");
@@ -124,11 +138,7 @@ public class Relatorio extends javax.swing.JFrame {
         jtRelatorio.setFont(new java.awt.Font("Segoe UI", 2, 12)); // NOI18N
         jtRelatorio.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+
             },
             new String [] {
                 "Nome", "Valor", "Vencimento", "Quantidade de Parcelas", "Pago"
@@ -184,7 +194,7 @@ public class Relatorio extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(323, 323, 323)
                 .addComponent(jlSoma, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -193,20 +203,76 @@ public class Relatorio extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jlSoma, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(88, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        jtRelatorio1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jtRelatorio1.setFont(new java.awt.Font("Segoe UI", 2, 12)); // NOI18N
+        jtRelatorio1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Nome", "Valor", "Vencimento", "Pago"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Boolean.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jtRelatorio1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jtRelatorio1.setGridColor(new java.awt.Color(0, 0, 0));
+        jtRelatorio1.setSelectionBackground(new java.awt.Color(102, 204, 255));
+        jtRelatorio1.setShowGrid(false);
+        jtRelatorio1.setShowHorizontalLines(true);
+        jtRelatorio1.getTableHeader().setReorderingAllowed(false);
+        jScrollPane2.setViewportView(jtRelatorio1);
+        if (jtRelatorio1.getColumnModel().getColumnCount() > 0) {
+            jtRelatorio1.getColumnModel().getColumn(0).setResizable(false);
+            jtRelatorio1.getColumnModel().getColumn(1).setResizable(false);
+            jtRelatorio1.getColumnModel().getColumn(1).setPreferredWidth(50);
+            jtRelatorio1.getColumnModel().getColumn(2).setResizable(false);
+            jtRelatorio1.getColumnModel().getColumn(2).setPreferredWidth(50);
+            jtRelatorio1.getColumnModel().getColumn(3).setResizable(false);
+        }
+
+        jLabel1.setText("Contas Variaveis");
+
+        jLabel2.setText("Contas Fixas");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblMes, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 762, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblMes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 762, Short.MAX_VALUE)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 762, Short.MAX_VALUE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(322, 322, 322)
+                        .addComponent(jLabel1)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGap(324, 324, 324)
+                .addComponent(jLabel2)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -214,7 +280,13 @@ public class Relatorio extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(lblMes, javax.swing.GroupLayout.PREFERRED_SIZE, 29, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 273, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLabel1)
+                .addGap(11, 11, 11)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel2)
+                .addGap(8, 8, 8)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -261,10 +333,14 @@ public class Relatorio extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel jlSoma;
     private javax.swing.JTable jtRelatorio;
+    private javax.swing.JTable jtRelatorio1;
     private javax.swing.JLabel lblMes;
     // End of variables declaration//GEN-END:variables
 }

@@ -4,13 +4,24 @@ package Model;
 import java.util.Date;
 
 
-public class Conta {
+abstract class Conta {
     private int id;
     private String nome;
     private double valor;
     private int qtdParcela;//vai para Contas variaveis
     private Date vencimento;
+    private String categoria;
 
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
+    }
+
+
+    
     public int getId() {
         return id;
     }

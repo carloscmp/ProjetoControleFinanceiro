@@ -10,21 +10,22 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static DAO.Conexao.ConexaoJDBC.conn;
-import Model.ContaFixa;
+import Model.ContaVariavel;
 
-public class ContaFixaDAO {
+public class ContaVariavelDAO{
 
-    public void adicinonar(ContaFixa nc) {
+    public void adicinonar(ContaVariavel nc) {
 
-        String sql = "INSERT INTO CONTA_FIXA(NOME, VALOR, VENCIMENTO, CATEGORIA)VALUES(?,?,?,?)";
+        String sql = "INSERT INTO CONTA_VARIAVEL(NOME, VALOR, VENCIMENTO, QTDPARCELA, CATEGORIA)VALUES(?,?,?,?,?)";
         PreparedStatement ps = null;
 
         try {
             ps = ConexaoJDBC.getconexao().prepareStatement(sql);
-            ps.setString(1, nc.getNome());            
+            ps.setString(1, nc.getNome());
             ps.setDouble(2, nc.getValor());
             ps.setDate(3, (Date) nc.getVencimento());
-            ps.setString(4, nc.getCategoria());
+            ps.setInt(4, nc.getQtdParcela());
+            ps.setString(5, nc.getCategoria());
             ps.execute();
         } catch (Exception e) {
             e.printStackTrace();
@@ -41,30 +42,31 @@ public class ContaFixaDAO {
 
     }
 
-    public List<ContaFixa> read() throws SQLException {
+    public List<ContaVariavel> read() throws SQLException {
 
         ConexaoJDBC.getconexao();
         PreparedStatement stmt = null;
         ResultSet rs = null;
 
-        List<ContaFixa> novaContas = new ArrayList<>();
+        List<ContaVariavel> novaContas = new ArrayList<>();
 
         try {
 
-            stmt = conn.prepareStatement("SELECT * FROM conta_fixa");
+            stmt = conn.prepareStatement("SELECT * FROM conta_variavel");
             rs = stmt.executeQuery();
 
             while (rs.next()) {
-                ContaFixa novaConta = new ContaFixa();
+                ContaVariavel novaConta = new ContaVariavel();
                 novaConta.setNome(rs.getString("nome"));
                 novaConta.setCategoria(rs.getString("categoria"));
                 novaConta.setValor(rs.getDouble("valor"));
                 novaConta.setVencimento(rs.getDate("vencimento"));
+                novaConta.setQtdParcela(rs.getInt("qtdparcela"));
                 novaContas.add(novaConta);
             }
 
         } catch (SQLException ex) {
-            Logger.getLogger(ContaFixaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ContaVariavelDAO.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
 
             conn.close();

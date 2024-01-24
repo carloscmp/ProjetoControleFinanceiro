@@ -16,8 +16,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import DAO.ContaVariavelDAO;
-import Model.Conta;
 import Model.ContaFixa;
+import Model.ContaVariavel;
 import Util.Utilitario;
 
 public class Relatorio extends javax.swing.JFrame {
@@ -39,9 +39,9 @@ public class Relatorio extends javax.swing.JFrame {
             @Override
             public void tableChanged(TableModelEvent e) {
                 // Verifique se a alteração ocorreu na coluna das caixas de seleção (coluna índice 4)
-                if (e.getColumn() == 4 && e.getType() == TableModelEvent.UPDATE) {
+                if (e.getColumn() == 5 && e.getType() == TableModelEvent.UPDATE) {
                     int rowIndex = e.getFirstRow();
-                    boolean isChecked = (Boolean) modelo.getValueAt(rowIndex, 4);
+                    boolean isChecked = (Boolean) modelo.getValueAt(rowIndex, 5);
 
                     // Execute sua ação desejada na linha toda aqui com base em se a caixa de seleção está marcada ou não
                     if (isChecked) {
@@ -83,36 +83,37 @@ public class Relatorio extends javax.swing.JFrame {
 
     public void readJTable() throws SQLException {
 
-        
-        ContaVariavelDAO cdao = new ContaVariavelDAO();
+        ContaVariavelDAO cvdao = new ContaVariavelDAO();
         // Criar um formatador de números para formatar o valor
         NumberFormat numberFormat = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
-        for (Conta nc : cdao.read()) {
+
+        for (ContaVariavel ncv : cvdao.read()) {
             DefaultTableModel modelo = (DefaultTableModel) jtRelatorio.getModel();
             // Formatar o valor como uma String antes de adicionar à tabela
-            String valorFormatado = numberFormat.format(nc.getValor());
+            String valorFormatado = numberFormat.format(ncv.getValor());
             modelo.addRow(new Object[]{
-                nc.getNome().toUpperCase(),
+                ncv.getNome().toUpperCase(),
+                ncv.getCategoria().toUpperCase(),
                 valorFormatado,
-                Utilitario.formatarData(nc.getVencimento()),
-                //  new SimpleDateFormat("dd/MM/yyyy").format(nc.getVencimento()),
-                nc.getQtdParcela()
+                Utilitario.formatarData(ncv.getVencimento()),
+                ncv.getQtdParcela()
             });
-            totalValor += nc.getValor();
+            totalValor += ncv.getValor();
         }
+
         ContaFixaDAO cfdao = new ContaFixaDAO();
-        for (Conta nc1 : cfdao.read()) {
+        for (ContaFixa ncf : cfdao.read()) {
             DefaultTableModel modelo = (DefaultTableModel) jtRelatorio1.getModel();
             // Formatar o valor como uma String antes de adicionar à tabela
-            String valorFormatado = numberFormat.format(nc1.getValor());
+            String valorFormatado = numberFormat.format(ncf.getValor());
             modelo.addRow(new Object[]{
-                nc1.getNome().toUpperCase(),
+                ncf.getNome().toUpperCase(),
+                ncf.getCategoria().toUpperCase(),
                 valorFormatado,
-                Utilitario.formatarData(nc1.getVencimento()),
-                //  new SimpleDateFormat("dd/MM/yyyy").format(nc.getVencimento()),
-            });
+                Utilitario.formatarData(ncf.getVencimento()),});
+            totalValor += ncf.getValor();
         }
-        
+
     }
 
     @SuppressWarnings("unchecked")
@@ -132,7 +133,6 @@ public class Relatorio extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Relatório");
         setAlwaysOnTop(true);
-        setResizable(false);
 
         jtRelatorio.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jtRelatorio.setFont(new java.awt.Font("Segoe UI", 2, 12)); // NOI18N
@@ -141,14 +141,14 @@ public class Relatorio extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Nome", "Valor", "Vencimento", "Quantidade de Parcelas", "Pago"
+                "Nome", "Categoria", "Valor", "Vencimento", "Quantidade de Parcelas", "Status"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Boolean.class
+                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, true
+                false, false, false, false, false, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -169,12 +169,13 @@ public class Relatorio extends javax.swing.JFrame {
         if (jtRelatorio.getColumnModel().getColumnCount() > 0) {
             jtRelatorio.getColumnModel().getColumn(0).setResizable(false);
             jtRelatorio.getColumnModel().getColumn(1).setResizable(false);
-            jtRelatorio.getColumnModel().getColumn(1).setPreferredWidth(50);
             jtRelatorio.getColumnModel().getColumn(2).setResizable(false);
             jtRelatorio.getColumnModel().getColumn(2).setPreferredWidth(50);
             jtRelatorio.getColumnModel().getColumn(3).setResizable(false);
-            jtRelatorio.getColumnModel().getColumn(3).setPreferredWidth(125);
+            jtRelatorio.getColumnModel().getColumn(3).setPreferredWidth(50);
             jtRelatorio.getColumnModel().getColumn(4).setResizable(false);
+            jtRelatorio.getColumnModel().getColumn(4).setPreferredWidth(125);
+            jtRelatorio.getColumnModel().getColumn(5).setResizable(false);
         }
 
         lblMes.setFont(new java.awt.Font("Sitka Banner", 0, 24)); // NOI18N
@@ -213,14 +214,14 @@ public class Relatorio extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Nome", "Valor", "Vencimento", "Pago"
+                "Nome", "Categoria", "Valor", "Vencimento", "Status"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Boolean.class
+                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, true
+                false, true, false, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -240,11 +241,11 @@ public class Relatorio extends javax.swing.JFrame {
         jScrollPane2.setViewportView(jtRelatorio1);
         if (jtRelatorio1.getColumnModel().getColumnCount() > 0) {
             jtRelatorio1.getColumnModel().getColumn(0).setResizable(false);
-            jtRelatorio1.getColumnModel().getColumn(1).setResizable(false);
-            jtRelatorio1.getColumnModel().getColumn(1).setPreferredWidth(50);
             jtRelatorio1.getColumnModel().getColumn(2).setResizable(false);
             jtRelatorio1.getColumnModel().getColumn(2).setPreferredWidth(50);
             jtRelatorio1.getColumnModel().getColumn(3).setResizable(false);
+            jtRelatorio1.getColumnModel().getColumn(3).setPreferredWidth(50);
+            jtRelatorio1.getColumnModel().getColumn(4).setResizable(false);
         }
 
         jLabel1.setText("Contas Variaveis");
@@ -278,15 +279,15 @@ public class Relatorio extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lblMes, javax.swing.GroupLayout.PREFERRED_SIZE, 29, Short.MAX_VALUE)
+                .addComponent(lblMes, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1)
                 .addGap(11, 11, 11)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
                 .addGap(8, 8, 8)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())

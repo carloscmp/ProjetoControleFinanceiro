@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package View;
 
 import java.sql.SQLException;
@@ -9,14 +5,20 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import View.Relatorio;
-import View.TelaCadastroContaVariavel;
 
 public class TelaInicial extends javax.swing.JFrame {
-    
+
     public TelaInicial() {
         initComponents();
         setarData();
+        //É PRECISO IMPLEMENTAR DE FORMA QUE O RELATÓRIO SEJA ATUALIZADO EM TEMPO REAL ASSIM QUE UMA CONTA É ADICIONADA
+        Relatorio rl = null;
+        try {
+            rl = new Relatorio();
+        } catch (SQLException ex) {
+            Logger.getLogger(TelaInicial.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        rl.setVisible(true);
     }
 
     /**
@@ -139,13 +141,12 @@ public class TelaInicial extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         jButton3.setEnabled(true);
         jButton4.setEnabled(true);
-        jButton1.setEnabled(false);
-        
+       // jButton1.setEnabled(false);
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        
+
         Relatorio rl = null;
         try {
             rl = new Relatorio();
@@ -157,7 +158,7 @@ public class TelaInicial extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        
+
         jButton3.setEnabled(false);
         TelaCadastroContaVariavel tcd = new TelaCadastroContaVariavel();
         tcd.setVisible(true);
@@ -165,15 +166,15 @@ public class TelaInicial extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        
+
         jButton4.setEnabled(false);
         TelaCadastroContaFixa tccf = new TelaCadastroContaFixa();
         tccf.setVisible(true);
 
     }//GEN-LAST:event_jButton3ActionPerformed
-    
+
     private void setarData() {
-        
+
         Date data = new Date();
         DateFormat formatador = DateFormat.getDateInstance(DateFormat.FULL);
         lblData.setText(formatador.format(data).toUpperCase());

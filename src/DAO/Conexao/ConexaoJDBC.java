@@ -8,9 +8,9 @@ import javax.swing.JOptionPane;
 public class ConexaoJDBC {
 
     //conexão com o BD(enviar login e senha para a correção da atividade)
-    private static final String URL = "";
-    private static final String USER = "";
-    private static final String PASSWORD = "";
+    private static final String URL = "jdbc:mysql://localhost:3306/dbsistemafinanceiro";
+    private static final String USER = "root";
+    private static final String PASSWORD = "Senhamysql10";
 
     public static Connection conn;
 

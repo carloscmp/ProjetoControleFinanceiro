@@ -1,4 +1,4 @@
-    package View;
+package View;
 
 import DAO.ContaFixaDAO;
 import java.sql.SQLException;
@@ -27,23 +27,27 @@ import java.awt.event.KeyListener;
 public class Relatorio extends javax.swing.JFrame {
 
     private double totalValor;
+    private double totalContaVariavel;
+    private double totalContaFixa;
 
     public Relatorio() throws SQLException {
-        
 
         initComponents();
-        
+
         jcbStatus.getEditor().getEditorComponent().addKeyListener(new KeyListener() {
             @Override
-            public void keyTyped(KeyEvent e) { }
+            public void keyTyped(KeyEvent e) {
+            }
 
             @Override
-            public void keyPressed(KeyEvent e) {}
+            public void keyPressed(KeyEvent e) {
+            }
 
             @Override
-            public void keyReleased(KeyEvent e) {}
+            public void keyReleased(KeyEvent e) {
+            }
         });
-        
+
         //centraliza conteudo da tabela
         jtRelatorio.setDefaultRenderer(Object.class, new CellRenderer());
         jtRelatorio1.setDefaultRenderer(Object.class, new CellRenderer());
@@ -54,6 +58,8 @@ public class Relatorio extends javax.swing.JFrame {
         jtRelatorio.setRowSorter(new TableRowSorter(modelo));
         readJTable();
         updateSomaLabel();
+        updateContasVariaveis();
+        updateContasFixas();
         setarMes();
         //Codigo para alinhar conteudo de texto das colunas da jtable
         ((DefaultTableCellRenderer) jtRelatorio.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
@@ -93,6 +99,17 @@ public class Relatorio extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(this, "Checkbox da linha " + (rowIndex + 1) + " desmarcado");
     }
 
+    private void updateContasVariaveis() {
+
+        jlContasVariaveis.setText(String.format("Contas Variáveis: R$ %.2f", totalContaVariavel));
+
+    }
+    private void updateContasFixas() {
+
+        jlContasFixas.setText(String.format("Contas Fixas: R$ %.2f", totalContaFixa));
+
+    }
+
     private void setarMes() {
         Date mes = new Date();
         SimpleDateFormat formatador = new SimpleDateFormat("MMMM");
@@ -124,6 +141,7 @@ public class Relatorio extends javax.swing.JFrame {
                 ncv.getQtdParcela()
             });
             totalValor += ncv.getValor();
+            totalContaVariavel += ncv.getValor();
         }
 
         ContaFixaDAO cfdao = new ContaFixaDAO();
@@ -137,6 +155,7 @@ public class Relatorio extends javax.swing.JFrame {
                 valorFormatado,
                 Utilitario.formatarData(ncf.getVencimento()),});
             totalValor += ncf.getValor();
+            totalContaFixa += ncf.getValor();
         }
 
     }
@@ -153,8 +172,8 @@ public class Relatorio extends javax.swing.JFrame {
         jlSoma = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jtRelatorio1 = new javax.swing.JTable();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        jlContasVariaveis = new javax.swing.JLabel();
+        jlContasFixas = new javax.swing.JLabel();
 
         jcbStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pendente", "Pago" }));
 
@@ -196,7 +215,6 @@ public class Relatorio extends javax.swing.JFrame {
         jScrollPane1.setViewportView(jtRelatorio);
         if (jtRelatorio.getColumnModel().getColumnCount() > 0) {
             jtRelatorio.getColumnModel().getColumn(0).setResizable(false);
-            jtRelatorio.getColumnModel().getColumn(1).setResizable(false);
             jtRelatorio.getColumnModel().getColumn(2).setResizable(false);
             jtRelatorio.getColumnModel().getColumn(2).setPreferredWidth(50);
             jtRelatorio.getColumnModel().getColumn(3).setResizable(false);
@@ -222,9 +240,9 @@ public class Relatorio extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jlSoma, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jlSoma, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -246,7 +264,7 @@ public class Relatorio extends javax.swing.JFrame {
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, true, false, true, true
+                false, false, false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -262,6 +280,7 @@ public class Relatorio extends javax.swing.JFrame {
         jScrollPane2.setViewportView(jtRelatorio1);
         if (jtRelatorio1.getColumnModel().getColumnCount() > 0) {
             jtRelatorio1.getColumnModel().getColumn(0).setResizable(false);
+            jtRelatorio1.getColumnModel().getColumn(1).setResizable(false);
             jtRelatorio1.getColumnModel().getColumn(2).setResizable(false);
             jtRelatorio1.getColumnModel().getColumn(2).setPreferredWidth(50);
             jtRelatorio1.getColumnModel().getColumn(3).setResizable(false);
@@ -270,9 +289,9 @@ public class Relatorio extends javax.swing.JFrame {
             jtRelatorio1.getColumnModel().getColumn(4).setCellEditor(new javax.swing.DefaultCellEditor(jcbStatus));
         }
 
-        jLabel1.setText("Contas Variaveis");
+        jlContasVariaveis.setText("Contas Variaveis");
 
-        jLabel2.setText("Contas Fixas");
+        jlContasFixas.setText("Contas Fixas");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -289,12 +308,12 @@ public class Relatorio extends javax.swing.JFrame {
                             .addComponent(jScrollPane2)))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel1)
+                        .addComponent(jlContasVariaveis)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel2)
+                .addComponent(jlContasFixas)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -303,11 +322,11 @@ public class Relatorio extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(lblMes, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel1)
+                .addComponent(jlContasVariaveis)
                 .addGap(11, 11, 11)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel2)
+                .addComponent(jlContasFixas)
                 .addGap(8, 8, 8)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -356,12 +375,12 @@ public class Relatorio extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JComboBox<String> jcbStatus;
+    private javax.swing.JLabel jlContasFixas;
+    private javax.swing.JLabel jlContasVariaveis;
     private javax.swing.JLabel jlSoma;
     private javax.swing.JTable jtRelatorio;
     private javax.swing.JTable jtRelatorio1;
